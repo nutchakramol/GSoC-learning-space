@@ -1,14 +1,20 @@
 # Models
 
-Two models exploring bounded rationality and strategic behavior — topics I care about deeply and wanted to stress-test Mesa with.
+These two models are a deep dive into 
+    Bounded Rationality and Strategic Evolution. 
 
----
+I’m a big Game Theory nerd, so I built these to see if I could make complex ideas like QRE and Cognitive Hierarchies actually work in a living, breathing Mesa simulation.
 
 ## Model 1: Cognitive Hierarchy Market (`ch_market_model.py`)
 
 ### What it does
 
-A double-auction market where agents differ in strategic sophistication. Based on Camerer, Ho & Chong's Cognitive Hierarchy theory: level-0 agents bid randomly, level-k agents best-respond to a mix of levels 0 through k-1. Each agent also holds a Bayesian prior (Gamma distributed) over the population's mean sophistication parameter τ, which they update after observing market-clearing prices.
+A double-auction market where agents differ in strategic sophistication. 
+Based on Camerer, Ho & Chong's Cognitive Hierarchy theory: 
+    level-0 agents bid randomly
+    level-k agents best-respond to a mix of levels 0 through k-1. 
+    
+Each agent also holds a Bayesian prior (Gamma distributed) over the population's mean sophistication parameter τ, which they update after observing market-clearing prices.
 
 ### Mesa features used
 
@@ -53,8 +59,11 @@ Includes a batch experiment (`mesa.batch_run`) crossing imitation probability an
 
 ### What I learned
 
-- The two-phase `step` / `advance` pattern is genuinely useful here — it prevents agents from reacting to actions that haven't been decided yet in the same round. Mesa makes this easy; I just had to not mix the phases.
+- The two-phase `step` / `advance` pattern is genuinely useful here 
+it prevents agents from reacting to actions that haven't been decided yet in the same round. Mesa makes this easy; I just had to not mix the phases.
+
 - `batch_run` is powerful but the returned DataFrame column naming for model reporters needs care — I had to filter by `Step == 100` and group manually to get the analysis I wanted.
+
 - `PopEntropy` as a reporter (Shannon entropy over mean population strategy mix) gave me a much richer signal than `MeanLambda` alone — it reveals whether the population converges to a sharp strategy or stays diffuse.
 
 ### What was hard
@@ -71,6 +80,3 @@ The `batch_run` filter on `lam_noise` uses `np.isclose` because floating-point p
 
 ---
 
-## Progression notes
-
-These two models pushed me into parts of Mesa I wouldn't have touched with a tutorial model: multi-reporter data collection, batch runs with parameter sweeps, two-phase agent activation, and the design question of what belongs in the agent vs the model. The friction points I hit — ordering guarantees in `shuffle_do`, DataFrame column naming in batch results, float comparison in parameter filters — are real usability issues worth thinking about as contributions.
